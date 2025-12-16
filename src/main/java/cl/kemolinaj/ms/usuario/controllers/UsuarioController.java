@@ -1,21 +1,18 @@
 package cl.kemolinaj.ms.usuario.controllers;
 
-import cl.kemolinaj.ms.usuario.dtos.DeleteRqDto;
-import cl.kemolinaj.ms.usuario.dtos.UsuarioRqDto;
-import cl.kemolinaj.ms.usuario.dtos.UsuarioRsDto;
+import cl.kemolinaj.ms.usuario.dtos.*;
 import cl.kemolinaj.ms.usuario.exceptions.UsuarioException;
 import cl.kemolinaj.ms.usuario.services.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/usuario", consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/usuario")
 @Slf4j
 public class UsuarioController {
     private final UsuarioService usuarioService;
