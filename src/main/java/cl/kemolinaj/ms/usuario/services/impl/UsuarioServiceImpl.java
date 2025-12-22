@@ -29,9 +29,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioRsDto agregarUsuario(UsuarioRqDto rqDto) throws UsuarioException {
         try{
             if (rqDto.id() != null) throw new BadRequestException("No se puede agregar un usuario");
+
+            UsuarioEntity buscarUser = usuarioRepository.findByUserNameAndEmail(rqDto.userName(), rqDto.email());
+
+            if (buscarUser != null) throw new BadRequestException("El usuario ya existe");
+
             return usuarioMapper.toUsuarioRsDto(usuarioRepository.save(usuarioMapper.toUsuarioEntity(rqDto)));
         } catch (Exception e) {
-            throw new UsuarioException("Error al ingresar el usuario");
+            throw new UsuarioException(e.getMessage());
         }
     }
 
@@ -42,6 +47,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         } catch (Exception e) {
             throw new UsuarioException("Error al obtener todos los usuarios");
         }
+    }
+
+    @Override
+    public UsuarioRsDto getUsuarioByUsernameAndPassword(String username, String password) throws UsuarioException {
+        return usuarioMapper.toUsuarioRsDto(usuarioRepository.findByUserNameAndPassword(username, password));
     }
 
     @Override

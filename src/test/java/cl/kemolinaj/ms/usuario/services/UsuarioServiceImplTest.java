@@ -44,12 +44,15 @@ class UsuarioServiceImplTest {
     @BeforeEach
     void setUp() {
         usuarioRqDto = new UsuarioRqDto(null, "Juan", "juan@ejemplo.com", "password123", "true", "", true, new ArrayList<>());
-        usuarioRsDto = new UsuarioRsDto(1L, "Juan", "juan@ejemplo.com", "password123", "true", "", true, new ArrayList<>());
+        usuarioRsDto = new UsuarioRsDto(1L, "Juan", "juan@ejemplo.com", "true", "", true, new ArrayList<>());
         usuarioEntity = new UsuarioEntity();
         usuarioEntity.setId(1L);
         usuarioEntity.setNombre("Juan");
         usuarioEntity.setEmail("juan@ejemplo.com");
         usuarioEntity.setActivo(true);
+        usuarioEntity.setUserName("usuario123");
+        usuarioEntity.setEmail("usuario@test.com");
+
     }
 
     // ==================== Pruebas para agregarUsuario ====================
@@ -76,6 +79,19 @@ class UsuarioServiceImplTest {
     }
 
     @Test
+    @DisplayName("Debería lanzar BadRequestException cuando el usuario ya existe - LÍNEA 35")
+    void testAgregarUsuarioYaExiste() {
+        // Arrange
+        when(usuarioRepository.findByUserNameAndEmail(usuarioRqDto.userName(), usuarioRqDto.email()))
+                .thenReturn(usuarioEntity);
+
+        // Act & Assert
+        assertThrows(UsuarioException.class, () -> usuarioService.agregarUsuario(usuarioRqDto),
+                "Debería lanzar UsuarioException cuando el usuario ya existe");
+    }
+
+
+    @Test
     @DisplayName("Debe lanzar BadRequestException cuando el usuario ya tiene ID")
     void testAgregarUsuarioConIdExistente() {
         // Arrange
@@ -96,7 +112,7 @@ class UsuarioServiceImplTest {
         // Act & Assert
         UsuarioException exception = assertThrows(UsuarioException.class,
                 () -> usuarioService.agregarUsuario(usuarioRqDto));
-        assertEquals("Error al ingresar el usuario", exception.getMessage());
+        assertEquals("Error en BD", exception.getMessage());
         verify(usuarioRepository, times(1)).save(usuarioEntity);
     }
 
@@ -109,7 +125,7 @@ class UsuarioServiceImplTest {
         // Act & Assert
         UsuarioException exception = assertThrows(UsuarioException.class,
                 () -> usuarioService.agregarUsuario(usuarioRqDto));
-        assertEquals("Error al ingresar el usuario", exception.getMessage());
+        assertEquals("Error en mapeo", exception.getMessage());
         verify(usuarioRepository, never()).save(any());
     }
 
@@ -128,7 +144,7 @@ class UsuarioServiceImplTest {
         usuarioEntity2.setEmail("carlos@ejemplo.com");
         usuarioEntities.add(usuarioEntity2);
 
-        UsuarioRsDto usuarioRsDto2 = new UsuarioRsDto(2L, "Carlos", "carlos@ejemplo.com", "true", "", "true", true, new ArrayList<>());
+        UsuarioRsDto usuarioRsDto2 = new UsuarioRsDto(2L, "Carlos", "carlos@ejemplo.com",  "", "true", true, new ArrayList<>());
         List<UsuarioRsDto> usuarioRsDtos = new ArrayList<>();
         usuarioRsDtos.add(usuarioRsDto);
         usuarioRsDtos.add(usuarioRsDto2);
@@ -188,7 +204,7 @@ class UsuarioServiceImplTest {
     void testActualizarUsuarioExitoso() throws UsuarioException {
         // Arrange
         UsuarioRqDto usuarioActualizar = new UsuarioRqDto(1L, "Juan Actualizado", "juan.updated@ejemplo.com", "newPassword", "", "true", true, new ArrayList<>());
-        UsuarioRsDto usuarioRsDtoActualizado = new UsuarioRsDto(1L, "Juan Actualizado", "juan.updated@ejemplo.com", "true", "", "true", true, new ArrayList<>());
+        UsuarioRsDto usuarioRsDtoActualizado = new UsuarioRsDto(1L, "Juan Actualizado", "juan.updated@ejemplo.com", "", "true", true, new ArrayList<>());
 
         when(usuarioMapper.toUsuarioEntity(usuarioActualizar)).thenReturn(usuarioEntity);
         when(usuarioRepository.save(usuarioEntity)).thenReturn(usuarioEntity);
@@ -280,4 +296,43 @@ class UsuarioServiceImplTest {
         assertEquals("Error al borrar el usuario", exception.getMessage());
         verify(usuarioRepository, never()).deleteById(any());
     }
+
+    @Test
+    @DisplayName("Debe obtener un usuario por username y password exitosamente")
+    void testGetUsuarioByUsernameAndPasswordExitoso() throws UsuarioException {
+        // Arrange
+        String username = "testuser";
+        String password = "password123";
+
+        usuarioEntity = new UsuarioEntity();
+        usuarioEntity.setId(1L);
+        usuarioEntity.setUserName(username);
+        usuarioEntity.setPassword(password);
+        usuarioEntity.setNombre("Test");
+        usuarioEntity.setApellido("Usuario");
+        usuarioEntity.setEmail("test@example.com");
+        usuarioEntity.setActivo(true);
+
+        usuarioRsDto = new UsuarioRsDto(
+                1L,
+                username,
+                "Test",
+                "Usuario",
+                "test@example.com",
+                true,
+                List.of()
+        );
+
+        when(usuarioRepository.findByUserNameAndPassword(username, password))
+                .thenReturn(usuarioEntity);
+        when(usuarioMapper.toUsuarioRsDto(usuarioEntity))
+                .thenReturn(usuarioRsDto);
+
+        // Act
+        UsuarioRsDto resultado = usuarioService.getUsuarioByUsernameAndPassword(username, password);
+
+        // Assert
+        assertNotNull(resultado, "El resultado no debe ser nulo");
+    }
+
 }

@@ -48,7 +48,7 @@ class UsuarioControllerTest {
         objectMapper = new ObjectMapper();
 
         // Inicializar datos de prueba
-        usuarioRsDto = new UsuarioRsDto(1L, "Juan", "juan@ejemplo.com", "password123", "true", "", true, new ArrayList<>());
+        usuarioRsDto = new UsuarioRsDto(1L, "Juan", "juan@ejemplo.com", "true", "", true, new ArrayList<>());
     }
 
     // ==================== PRUEBAS POST (INGRESAR) ====================
@@ -89,7 +89,7 @@ class UsuarioControllerTest {
         // Arrange
         List<UsuarioRsDto> usuarios = List.of(
                 usuarioRsDto,
-                new UsuarioRsDto(2L, "María", "maria@ejemplo.com", "password456", "true", "", true, new ArrayList<>())
+                new UsuarioRsDto(2L, "María", "maria@ejemplo.com", "true", "", true, new ArrayList<>())
         );
         when(usuarioService.getAllUsuarios()).thenReturn(usuarios);
 

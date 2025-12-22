@@ -12,7 +12,6 @@ public record UsuarioRsDto (
         String nombre,
         String apellido,
         String email,
-        String password,
         String userName,
         Boolean activo,
         List<RolEntity> roles

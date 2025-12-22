@@ -11,6 +11,7 @@ public interface UsuarioService {
     UsuarioRsDto agregarUsuario(UsuarioRqDto rqDto) throws UsuarioException;
 
     List<UsuarioRsDto> getAllUsuarios() throws UsuarioException;
+    UsuarioRsDto getUsuarioByUsernameAndPassword(String username, String password) throws UsuarioException;
 
     UsuarioRsDto actualizarUsuario(UsuarioRqDto rqDto) throws UsuarioException;
 

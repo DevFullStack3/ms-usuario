@@ -28,6 +28,11 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <jwt.version>0.13.0</jwt.version>
+        <sonar.issue.ignore.multicriteria>e1</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S5738</sonar.issue.ignore.multicriteria.e1.ruleKey>
+        <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*Test.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
+
     </properties>
     <dependencies>
         <dependency>
@@ -100,6 +105,24 @@
             <artifactId>osdt_cert</artifactId>
             <version>21.17.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
